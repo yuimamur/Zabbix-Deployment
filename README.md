@@ -8,25 +8,29 @@ Amazon Linux2に対してZabbixサーバをインストールする。
 # OSの設定（タイムゾーン/言語など）
 
 ## 最新版にアップデート
+```
 yum -y update
-
+```
 ## タイムゾーン変更
+```
 timedatectl set-timezone Asia/Tokyo
-
+```
 ## 日本語に変更
+```
 localectl set-locale LANG=ja_JP.UTF-8
+```
 
 # MariaDBのインストールと設定
 DB(MariaDB)のインストールおよび初期PW設定
 
 Zabbixはデータベースが必要なので、MariaDBをインストールし、データベースを設定していきます。
-
+```
 yum -y install mariadb-server
-
+```
 ## MariaDBを起動およびサーバ起動時の自動起動設定
-
+```
 systemctl start mariadb && sudo systemctl enable mariadb
-
+```
 ## MariaDBのステータス確認
 
 ```
@@ -131,29 +135,35 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX-XXXXXX
 ```
 
 ## 日本語パッケージのインストール
+```
 yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl zabbix-web-japanese
-
+```
 # DB作成
 
 ## DBへログイン
+```
 mysql -u root -p
  Enter password:[任意で設定したPW]
-
+```
 ## "zabbix"というデータベースを作成
+```
 MariaDB [(none)]> create database zabbix character set utf8 collate utf8_bin;
-<br>   Query OK, 1 row affected (0.00 sec)
-
+Query OK, 1 row affected (0.00 sec)
+```
 ## データベース用アクセス用のユーザとPWを作成
+```
 MariaDB [(none)]> create user zabbix@localhost identified by '任意のPW';
-<br>   Query OK, 0 rows affected (0.00 sec)
-
+Query OK, 0 rows affected (0.00 sec)
+```
 ## 作成したユーザにデータベースへのアクセス権を設定
+```
 MariaDB [(none)]> grant all privileges on zabbix.* to zabbix@localhost;
   Query OK, 0 rows affected (0.00 sec)
-
+```
 ## DBから抜ける
+```
 MariaDB [(none)]> quit
-
+```
 DBの作成完了
 
 
@@ -237,12 +247,32 @@ Monitoring > Hosts > Zabbix Server > Latest Dataでデータが登録されて�
 ![image](https://github.com/yuimamur/Zabbix-Deployment/assets/59761194/60546192-a8a1-4cf6-8adf-46e999bd3168)
 
 
-シェルスクリプトでバルクでループさせたデータを投げたい。
-
+バルクでループさせたデータを投げたい。
+・シェルスクリプト
 ```
 [root@bb-amazonlinux2 admin]# cat loop.sh 
 #/bin/sh
 for i in {1..10} ; do
    zabbix_sender -z 127.0.0.1 -s "test" -k test-key -o ${i}
 done
+```
+
+・Python
+```
+[root@bb-amazonlinux2 admin]# cat loop.py 
+import subprocess
+import random
+import time
+
+while 1:
+    value = random.randint(0, 100)
+
+    cmd = 'zabbix_sender -z 127.0.0.1 -s "Zabbix server" -k "key" -o ' + str(value)
+    print(cmd)
+
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+    print(output)
+
+    time.sleep(1)
 ```
