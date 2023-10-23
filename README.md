@@ -42,7 +42,7 @@ CGroup: /system.slice/mariadb.service
 ## DBへのログインPWの初期設定
 mysql_secure_installation
 
-Set root password? [Y/n]  →「Y」を入力
+Set root password? [Y/n]  →「Y」を入力 <br><br><br><br><br><br><br><br><br><br><br><br>
 New password:
 Re-enter new password:
 　　Password updated successfully!
