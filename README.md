@@ -5,26 +5,30 @@ Amazon Linux2に対してZabbixサーバをインストールする。
 ② MariaDBのインストール・設定
 ③ Zabbixのインストール・DB作成
 
-### OSの設定（タイムゾーン/言語など）
+# OSの設定（タイムゾーン/言語など）
 
-# 最新版にアップデート
+## 最新版にアップデート
 yum -y update
 
-# タイムゾーン変更
+## タイムゾーン変更
 timedatectl set-timezone Asia/Tokyo
 
-# 日本語に変更
+## 日本語に変更
 localectl set-locale LANG=ja_JP.UTF-8
 
-### MariaDBのインストールと設定
+# MariaDBのインストールと設定
 DB(MariaDB)のインストールおよび初期PW設定
+
 Zabbixはデータベースが必要なので、MariaDBをインストールし、データベースを設定していきます。
+
 yum -y install mariadb-server
 
-# MariaDBを起動およびサーバ起動時の自動起動設定
+## MariaDBを起動およびサーバ起動時の自動起動設定
+
 systemctl start mariadb && sudo systemctl enable mariadb
 
-# MariaDBのステータス確認
+## MariaDBのステータス確認
+
 systemctl status mariadb
 
 ● mariadb.service - MariaDB database server
@@ -35,7 +39,7 @@ CGroup: /system.slice/mariadb.service
        tq2664 /bin/sh /usr/bin/mysqld_safe --basedir=/usr
        mq2830 /usr/libexec/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib64/mysql/plugin --log-error=/var/log...
 
-# DBへのログインPWの初期設定
+## DBへのログインPWの初期設定
 mysql_secure_installation
 
 Set root password? [Y/n]  →「Y」を入力
@@ -61,29 +65,36 @@ installation should now be secure.
 Thanks for using MariaDB!
 
 
-# MariaDBへのログイン確認(rootユーザでログイン)
+## MariaDBへのログイン確認(rootユーザでログイン)
 mysql -u root -p
- Enter password:
+
+Enter password:
+
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
+
 Your MariaDB connection id is 10
+
 Server version: 5.5.68-MariaDB MariaDB Server
+
 Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
 MariaDB [(none)]>quit
 
 
-### ZabbixのインストールとDB作成
+# ZabbixのインストールとDB作成
 
 ## Zabbixインストール
 
-# Zabbixのレポジトリを追加
+## Zabbixのレポジトリを追加
 rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
 
-# リポジトリのお掃除
-yum clean all
-”Maybe you want: rm -rf /var/cache/yum”って言われますが無視でOKです
+## リポジトリのお掃除
 
-# Zabbixのパッケージ（サーバ機能とエージェント）をインストール
+yum clean all
+
+## Zabbixのパッケージ（サーバ機能とエージェント）をインストール
 yum -y install zabbix-server-mysql zabbix-agent
 
 # CentOSのSoftware Collections (SCL)をインストール
