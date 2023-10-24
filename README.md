@@ -248,7 +248,7 @@ Monitoring > Hosts > Zabbix Server > Latest Dataでデータが登録されて�
 
 
 バルクでループさせたデータを投げたい。
-・シェルスクリプト
+<br>・シェルスクリプト
 ```
 [root@bb-amazonlinux2 admin]# cat loop.sh 
 #/bin/sh
